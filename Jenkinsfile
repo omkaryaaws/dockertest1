@@ -1,16 +1,16 @@
 pipeline {
     environment {
-        registry = 'sreeharshav/devopsb17'
+        registry = 'omkaryacool/docker-test'
         registryCredential = 'dockerhub_id'
-        dockerSwarmManager = '10.40.1.26:2375'
-        dockerhost = '10.40.1.26'
+        dockerSwarmManager = '15.206.203.112:2375'
+        dockerhost = '15.206.203.112'
         dockerImage = ''
     }
     agent any
     stages {
         stage('Cloning our Git') {
             steps {
-                git 'https://github.com/mavrick202/dockertest1.git'
+                git 'https://github.com/omkaryaaws/dockertest1.git'
             }
         }
         stage('Building our image') {

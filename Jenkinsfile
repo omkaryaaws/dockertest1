@@ -6,7 +6,7 @@ pipeline {
 		stage('Clone Repo') {
 			steps {
 				sh 'rm -rf dockertest1'
-                sh 'git clone 'https://github.com/omkaryaaws/dockertest1.git'
+                sh 'git clone https://github.com/omkaryaaws/dockertest1.git'
             }
 		}
 	}
@@ -34,7 +34,7 @@ pipeline {
 			}
 		}
 		   
-		   stage('check Reach') {
+		stage('check Reach') {
 			steps {
 				sh 'sleep 30s'
 				sh 'curl http://ec2-43-204-110-113.ap-south-1.compute.amazonaws.com:9000'

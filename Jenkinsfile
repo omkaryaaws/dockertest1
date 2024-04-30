@@ -14,8 +14,7 @@ pipeline {
 		stage('Build Docker Image') {
 			steps {
 				
-				sh 'cd var/lib/jenkins/workspace/pipeline1/dockertest1'
-				sh 'cp var/lib/jenkins/workspace/pipeline1/dockertest1/* /var/lib/jenkins/workspace/pipeline1/'
+				sh 'cd var/lib/jenkins/workspace/pipeline1/dockertest1_master'
 				sh 'docker rmi omkaryacool/docker-test:pipe1'
 				sh 'docker build -t omkaryacool/docker-test:pipe1 .'
 		}

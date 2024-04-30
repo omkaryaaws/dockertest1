@@ -1,49 +1,44 @@
 pipeline {
-    environment {
-        registry = 'omkaryacool/docker-test'
-        registryCredential = 'dockerhub_id'
-        dockerSwarmManager = '15.206.203.112:2375'
-        dockerhost = '15.206.203.112'
-        dockerImage = ''
-    }
-    agent any
-    stages {
-        stage('Cloning our Git') {
-            steps {
-                git 'https://github.com/omkaryaaws/dockertest1.git'
+
+
+	agent any
+	stages {
+		stage('Clone Repo') {
+			steps {
+				sh 'rm -rf dockertest1'
+                sh 'git clone 'https://github.com/omkaryaaws/dockertest1.git'
             }
-        }
-        stage('Building our image') {
-            steps {
-                script {
-                    dockerImage = docker.build registry + ":v$BUILD_NUMBER"
-                }
-            }
-        }
-        stage('Push Image To DockerHUB') {
-            steps {
-                script {
-                    docker.withRegistry( '', registryCredential ) {
-                        dockerImage.push()
-                    }
-                }
-            }
-        }
-        stage('Cleaning up') {
-            steps {
-                sh "docker rmi $registry:v$BUILD_NUMBER"
-            }
-        }
-        stage('Deploying to Docker Swarm') {
-            steps {
-                sh "docker -H tcp://$dockerSwarmManager service rm testing1 || true"
-                sh "docker -H tcp://$dockerSwarmManager service create --name testing1 -p 8100:80 $registry:v$BUILD_NUMBER"
-            }
-        }
-        stage('Verifying The Deployment') {
-            steps {
-                sh 'curl http://$dockerhost:8100 || exit 1'
-                }
-        }
-    }
-}
+		}
+	}
+		
+		stage('Build Docker Image') {
+			steps {
+				
+				sh 'cd var/lib/jenkins/workspace/pipeline1/dockertest1'
+				sh 'cp var/lib/jenkins/workspace/pipeline1/dockertest1/* /var/lib/jenkins/workspace/pipeline1/'
+				sh 'docker rmi omkaryacool/docker-test:pipe1'
+				sh 'docker build -t omkaryacool/docker-test:pipe1 .'
+		}
+	}
+	
+		stage('push image to docker hub') {	
+			steps {
+				sh  'docker push omkaryaaws/docker-test:pipe1'
+			}
+		}
+			
+		stage ('Deploy') {
+			steps {
+				sh 'docker -H tcp://172.31.0.111:2375 stop webapp1'
+				sh 'docker -H tcp://172.31.0.111:2375 run --rm -dit --name webapp1 --hostname webapp1 -p 9000:80 omkaryaaws/docker-test:pipe1'
+			}
+		}
+		   
+		   stage('check Reach') {
+			steps {
+				sh 'sleep 30s'
+				sh 'curl http://ec2-43-204-110-113.ap-south-1.compute.amazonaws.com:9000'
+			}
+			
+	   }
+ }
